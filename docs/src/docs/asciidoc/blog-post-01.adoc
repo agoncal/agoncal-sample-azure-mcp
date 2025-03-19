@@ -1,0 +1,24 @@
+= XXXX
+:author: {author-name}
+:icons: font
+:source-highlighter: highlight.js
+
+== Introduction
+* xxx
+
+== Prerequisites
+* Azure account and Azure CLI installed
+* Java and Maven installed
+* Quarkus application
+
+== yyy
+* xxx
+
+== Conclusion
+* xxxx
+
+== Definitions:
+*	xxx
+
+== Resources
+* xxx

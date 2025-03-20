@@ -53,7 +53,7 @@ public class AzureStorageMCPTools {
         InputStream contentStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
         // Upload the blob
-        file.upload(contentStream, content.length());
+        file.upload(contentStream);
 
         log.info("File " + file.getBlobName() + " created in the directory " + directory.getBlobContainerName() + " with content size " + content.length());
         return ToolResponse.success();

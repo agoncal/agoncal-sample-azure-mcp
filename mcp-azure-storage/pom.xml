@@ -61,9 +61,14 @@
     <!-- MCP -->
     <dependency>
       <groupId>io.quarkiverse.mcp</groupId>
-      <artifactId>quarkus-mcp-server-sse</artifactId>
+      <artifactId>quarkus-mcp-server-stdio</artifactId>
       <version>${quarkus-mcp-server.version}</version>
     </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.quarkiverse.mcp</groupId>-->
+<!--      <artifactId>quarkus-mcp-server-sse</artifactId>-->
+<!--      <version>${quarkus-mcp-server.version}</version>-->
+<!--    </dependency>-->
     <!-- Test -->
     <dependency>
       <groupId>io.quarkus</groupId>

@@ -60,3 +60,5 @@ out/
 
 # TLS Certificates
 .certs/
+
+data/

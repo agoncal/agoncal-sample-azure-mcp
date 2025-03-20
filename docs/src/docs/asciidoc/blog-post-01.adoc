@@ -21,4 +21,12 @@
 *	xxx
 
 == Resources
-* xxx
+* https://learn.microsoft.com/azure/storage/blobs/storage-blob-java-get-started?tabs=azure-ad[Get started with Azure Blob Storage and Java]
+* https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-java?tabs=powershell%2Cmanaged-identity%2Croles-azure-portal%2Csign-in-azure-cli&pivots=blob-storage-quickstart-scratch[Quickstart: Azure Blob Storage client library for Java]
+* https://learn.microsoft.com/rest/api/storageservices/authorize-with-azure-active-directory[Authorize with Microsoft Entra ID]
+* https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory[Authorize access to blobs using Microsoft Entra ID]
+* https://learn.microsoft.com/azure/storage/blobs/authorize-data-operations-cli[Choose how to authorize access to blob data with Azure CLI]
+* https://learn.microsoft.com/rest/api/storageservices/authorize-with-shared-key[Authorize with Shared Key]
+* https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents[Introducing Model Context Protocol (MCP) in Copilot Studio: Simplified Integration with AI Apps and Agents]
+* https://www.youtube.com/watch?v=GNfQM88Vthc[Introducing Model Context Protocol (MCP) in Copilot Studio]
+* https://github.com/modelcontextprotocol/inspector[MCP Inspector]

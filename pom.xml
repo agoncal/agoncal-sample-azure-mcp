@@ -9,6 +9,7 @@
 
     <modules>
         <module>docs</module>
-        <module>mcp-azure-storage</module>
+        <module>mcp-client-azure-storage</module>
+        <module>mcp-server-azure-storage</module>
     </modules>
 </project>

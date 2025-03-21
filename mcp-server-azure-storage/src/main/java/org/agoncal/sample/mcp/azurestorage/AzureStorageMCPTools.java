@@ -12,6 +12,7 @@ import io.quarkiverse.mcp.server.TextContent;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolResponse;
+import org.jboss.logging.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,26 +22,35 @@ import java.util.List;
 
 public class AzureStorageMCPTools {
 
+    private static final Logger log = Logger.getLogger(AzureStorageMCPTools.class);
+
     private static final String AZURE_STORAGE_ACCOUNT_NAME = System.getenv("AZURE_STORAGE_ACCOUNT_NAME");
     private static final String AZURE_STORAGE_ACCOUNT_KEY = System.getenv("AZURE_STORAGE_ACCOUNT_KEY");
 
     @Tool(name = "creates_a_directory", description = "Creates a new directory. If the directory already exists, the operation fails")
-    public ToolResponse createDirectory(@ToolArg(name = "directory_name", description = "The directory name to be created. The directory name cannot have spaces nor special characters.") String directoryName, McpLog log) {
+    public ToolResponse createDirectory(@ToolArg(name = "directory_name", description = "The directory name to be created. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
+        log.info("Creating a directory: " + directoryName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient();
 
         // Creates the container and return a container client object
-        BlobContainerClient directory = blobServiceClient.createBlobContainer(directoryName);
+        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
 
-        log.info("Directory " + directory.getBlobContainerName() + " has been created");
+        if (directory.exists()) {
+            mcpLog.error("Directory " + directory.getBlobContainerName() + " already exists. Not creating it.");
+        } else {
+            blobServiceClient.createBlobContainer(directoryName);
+            mcpLog.info("Directory " + directory.getBlobContainerName() + " has been created");
+        }
+
         return ToolResponse.success();
     }
 
     @Tool(name = "creates_a_text_file", description = "Creates a new text file in a given directory. If the directory does not exist, it creates it.")
     public ToolResponse createFile(@ToolArg(name = "directory_name", description = "The directory name to be created. The directory name cannot have spaces nor special characters.") String directoryName,
-                                   @ToolArg(name = "file_name", description = "The name of the file to be created in the directory. The file name cannot have spaces nor special characters and its file extension is '.txt'.") String fileName,
-                                   @ToolArg(description = "The content of the file in text format.") String content, McpLog log) {
-
+                                   @ToolArg(name = "file_name", description = "The name of the file to be created in the directory. The file name cannot have spaces nor special characters. The file extension must be '.txt'.") String fileName,
+                                   @ToolArg(description = "The content of the file in text format.") String content, McpLog mcpLog) {
+        log.info("Creating a file: " + fileName + " in directory: " + directoryName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient();
 
@@ -55,14 +65,14 @@ public class AzureStorageMCPTools {
         // Upload the blob
         file.upload(contentStream);
 
-        log.info("File " + file.getBlobName() + " created in the directory " + directory.getBlobContainerName() + " with content size " + content.length());
+        mcpLog.info("File " + file.getBlobName() + " created in the directory " + directory.getBlobContainerName() + " with content size " + content.length());
         return ToolResponse.success();
     }
 
     @Tool(name = "reads_a_text_file", description = "Reads a text file in a given directory.")
     public ToolResponse readFile(@ToolArg(name = "directory_name", description = "The directory name where the file is located. The directory name cannot have spaces nor special characters.") String directoryName,
-                                 @ToolArg(name = "file_name", description = "The name of the file to be read in the directory. The file name cannot have spaces nor special characters and its file extension must be '.txt'.") String fileName, McpLog log) {
-
+                                 @ToolArg(name = "file_name", description = "The name of the file to be read in the directory. The file name cannot have spaces nor special characters and its file extension must be '.txt'.") String fileName, McpLog mcpLog) {
+        log.info("Reading a file: " + fileName + " in directory: " + directoryName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient();
 
@@ -74,13 +84,14 @@ public class AzureStorageMCPTools {
         // Download the content
         BinaryData data = file.downloadContent();
 
-        log.info("File " + file.getBlobName() + " has been read from the directory " + directory.getBlobContainerName() + " with content size " + data.getLength());
+        mcpLog.info("File " + file.getBlobName() + " has been read from the directory " + directory.getBlobContainerName() + " with content size " + data.getLength());
         return ToolResponse.success(new TextContent(data.toString()));
     }
 
 
     @Tool(name = "deletes_a_directory", description = "Deletes a directory. If the directory does not exist, the operation fails")
-    public ToolResponse deleteDirectory(@ToolArg(name = "directory_name", description = "The directory name to be deleted. The directory name cannot have spaces nor special characters.") String directoryName, McpLog log) {
+    public ToolResponse deleteDirectory(@ToolArg(name = "directory_name", description = "The directory name to be deleted. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
+        log.info("Deleting a directory: " + directoryName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient();
 
@@ -88,12 +99,13 @@ public class AzureStorageMCPTools {
         BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
         directory.delete();
 
-        log.info("Directory " + directory.getBlobContainerName() + " has been deleted");
+        mcpLog.info("Directory " + directory.getBlobContainerName() + " has been deleted");
         return ToolResponse.success();
     }
 
     @Tool(name = "lists_files_under_a_directory", description = "Lists all the files under a directory.")
-    public ToolResponse listDirectories(@ToolArg(name = "directory_name", description = "The root directory name from where it lists all the files. The directory name cannot have spaces nor special characters.") String directoryName, McpLog log) {
+    public ToolResponse listDirectories(@ToolArg(name = "directory_name", description = "The root directory name from where it lists all the files. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
+        log.info("Listing files under a directory: " + directoryName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient();
 
@@ -105,7 +117,7 @@ public class AzureStorageMCPTools {
             files.add(new TextContent(file.getName()));
         }
 
-        log.info("Directory " + directory.getBlobContainerName() + " has " + files.size() + " files");
+        mcpLog.info("Directory " + directory.getBlobContainerName() + " has " + files.size() + " files");
         return ToolResponse.success(files);
     }
 

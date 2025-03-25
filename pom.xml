@@ -9,7 +9,9 @@
 
     <modules>
         <module>docs</module>
-        <module>mcp-client-azure-storage</module>
-        <module>mcp-server-azure-storage</module>
+        <module>mcp-client-langchain4j</module>
+        <module>mcp-server-azure-resourcemanager-resources</module>
+        <module>mcp-server-azure-resourcemanager-storage</module>
+        <module>mcp-server-azure-storage-blob</module>
     </modules>
 </project>

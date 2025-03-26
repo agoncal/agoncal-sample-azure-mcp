@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "azure-storage": {
+    "azure-mgt-storage": {
       "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
       "args": [
         "-jar",

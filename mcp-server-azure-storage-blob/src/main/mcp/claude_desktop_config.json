@@ -1,10 +1,14 @@
+// This is the configuration file for Claude Desktop.
+// It should be located under ~/Library/Application\ Support/Claude/  (on Mac)
+// Without these comments of course
+
 {
   "mcpServers": {
     "azure-storage": {
       "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
       "args": [
         "-jar",
-        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-storage/target/mcp-server-azure-storage-1.0.0-SNAPSHOT-runner.jar"
+        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-storage-blob/target/mcp-server-azure-storage-1.0.0-SNAPSHOT-runner.jar"
       ],
       "env": {
         "AZURE_STORAGE_ACCOUNT_NAME": "stxxxxxx",

@@ -4,12 +4,8 @@
       "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
       "args": [
         "-jar",
-        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-storage/target/mcp-server-azure-storage-1.0.0-SNAPSHOT-runner.jar"
-      ],
-      "env": {
-        "AZURE_STORAGE_ACCOUNT_NAME": "stxxxxxx",
-        "AZURE_STORAGE_ACCOUNT_KEY": "xxxxxxxx"
-      }
+        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-resourcemanager-storage/target/mcp-server-azure-resourcemanager-storage-1.0.0-SNAPSHOT-runner.jar"
+      ]
     }
   }
 }

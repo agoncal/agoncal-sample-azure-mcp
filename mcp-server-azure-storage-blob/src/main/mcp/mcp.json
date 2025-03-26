@@ -1,0 +1,51 @@
+// This is the configuration file for VS Code.
+// It should be located under ./vscode/mcp.json  (on Mac)
+// Without these comments of course
+
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "github-pat",
+      "description": "GitHub API Key",
+      "password": true
+    }
+  ],
+  "servers": {
+    "imas": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/imas"
+      ]
+    }
+  }
+}
+
+
+
+// "github": {
+//   "command": "docker",
+//   "args": [
+//     "run",
+//     "-i",
+//     "--rm",
+//     "-e",
+//     "GITHUB_PERSONAL_ACCESS_TOKEN",
+//     "mcp/github"
+//   ],
+//   "env": {
+//     "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-pat}"
+//   }
+// },
+// "octodemo": {
+//   "command": "docker",
+//   "args": [
+//     "run",
+//     "-i",
+//     "--rm",
+//     "octodemo/mcp-octodemo"
+//   ]
+// }

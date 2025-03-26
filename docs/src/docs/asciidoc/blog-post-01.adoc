@@ -30,3 +30,7 @@
 * https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents[Introducing Model Context Protocol (MCP) in Copilot Studio: Simplified Integration with AI Apps and Agents]
 * https://www.youtube.com/watch?v=GNfQM88Vthc[Introducing Model Context Protocol (MCP) in Copilot Studio]
 * https://github.com/modelcontextprotocol/inspector[MCP Inspector]
+* https://mcp-get.com[MCP Server Registry]
+* https://github.com/microsoft/vscode/issues/242864[MCP Server in VS Code]
+* https://github.com/microsoft/vscode/issues/244525[Testing MCP Server in VS Code]
+* https://www.mcp.run[MCP Run]

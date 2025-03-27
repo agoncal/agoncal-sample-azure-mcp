@@ -8,13 +8,12 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.resourcemanager.resources.ResourceManager;
 import com.azure.resourcemanager.resources.models.ResourceGroup;
 
-import java.time.Instant;
-
 public class AzureResourceManagerResourcesMCPToolsTest {
 
     public static void main(String[] args) {
 
         AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
+
         TokenCredential credential = new DefaultAzureCredentialBuilder()
             .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
             .build();
@@ -23,7 +22,7 @@ public class AzureResourceManagerResourcesMCPToolsTest {
             .authenticate(credential, profile)
             .withDefaultSubscription();
 
-        ResourceGroup resourceGroup = manager.resourceGroups().define("rg-mcpazure" + Instant.now().toEpochMilli())
+        ResourceGroup resourceGroup = manager.resourceGroups().define("rg-mcpazure-storage")
             .withRegion(Region.US_EAST)
             .create();
 

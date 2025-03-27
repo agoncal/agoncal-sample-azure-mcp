@@ -17,9 +17,6 @@ public class AzureResourceManagerResourcesMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerResourcesMCPTools.class);
 
-    private static final String AZURE_STORAGE_ACCOUNT_NAME = System.getenv("AZURE_STORAGE_ACCOUNT_NAME");
-    private static final String AZURE_STORAGE_ACCOUNT_KEY = System.getenv("AZURE_STORAGE_ACCOUNT_KEY");
-
     @Tool(name = "creates_a_resource_group", description = "Creates a new resource group. If the resource group already exists, the operation fails")
     public ToolResponse createResourceGroup(@ToolArg(name = "resource_group_name", description = "The name of the resource group to be created. A resource group in Azure is a container that holds related resources (storage account, database, message hubs...). The name of the resource group cannot have spaces and should start with the prefix 'rg-'.") String resourceGroupName, McpLog mcpLog) {
         log.info("Creating a resource group: " + resourceGroupName);
@@ -29,11 +26,11 @@ public class AzureResourceManagerResourcesMCPTools {
             .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
             .build();
 
-        ResourceManager manager = ResourceManager
+        ResourceManager resourceManager = ResourceManager
             .authenticate(credential, profile)
             .withDefaultSubscription();
 
-        ResourceGroup resourceGroup = manager.resourceGroups().define(resourceGroupName)
+        ResourceGroup resourceGroup = resourceManager.resourceGroups().define(resourceGroupName)
             .withRegion(Region.US_EAST)
             .create();
 

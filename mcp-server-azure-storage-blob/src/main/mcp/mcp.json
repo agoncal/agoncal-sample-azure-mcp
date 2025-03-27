@@ -3,49 +3,18 @@
 // Without these comments of course
 
 {
-  "inputs": [
-    {
-      "type": "promptString",
-      "id": "github-pat",
-      "description": "GitHub API Key",
-      "password": true
-    }
-  ],
   "servers": {
-    "imas": {
-      "command": "docker",
+    "azure-storage": {
+      "type": "stdio",
+      "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
       "args": [
-        "run",
-        "-i",
-        "--rm",
-        "mcp/imas"
-      ]
+        "-jar",
+        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-storage-blob/target/mcp-server-azure-storage-blob-1.0.0-SNAPSHOT-runner.jar"
+      ],
+      "env": {
+        "AZURE_STORAGE_ACCOUNT_NAME": "stxxxxxx",
+        "AZURE_STORAGE_ACCOUNT_KEY": "xxxxxxxx"
+      }
     }
   }
 }
-
-
-
-// "github": {
-//   "command": "docker",
-//   "args": [
-//     "run",
-//     "-i",
-//     "--rm",
-//     "-e",
-//     "GITHUB_PERSONAL_ACCESS_TOKEN",
-//     "mcp/github"
-//   ],
-//   "env": {
-//     "GITHUB_PERSONAL_ACCESS_TOKEN": "${input:github-pat}"
-//   }
-// },
-// "octodemo": {
-//   "command": "docker",
-//   "args": [
-//     "run",
-//     "-i",
-//     "--rm",
-//     "octodemo/mcp-octodemo"
-//   ]
-// }

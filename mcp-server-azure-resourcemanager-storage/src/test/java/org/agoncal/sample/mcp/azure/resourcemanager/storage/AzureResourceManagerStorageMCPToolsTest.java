@@ -7,11 +7,10 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.storage.models.StorageAccount;
 import com.azure.resourcemanager.storage.models.StorageAccountSkuType;
-import org.jboss.logging.Logger;
+import static org.agoncal.sample.mcp.azure.common.Constants.AZURE_RESOURCE_GROUP;
+import static org.agoncal.sample.mcp.azure.common.Constants.AZURE_STORAGE_ACCOUNT_NAME;
 
 public class AzureResourceManagerStorageMCPToolsTest {
-
-    private static final Logger log = Logger.getLogger(AzureResourceManagerStorageMCPToolsTest.class);
 
     public static void main(String[] args) {
 
@@ -20,14 +19,14 @@ public class AzureResourceManagerStorageMCPToolsTest {
                 new AzureProfile(AzureEnvironment.AZURE))
             .withDefaultSubscription();
 
-        StorageAccount storageAccount = azure.storageAccounts().define("stmcpazureantoniomanug")
+        StorageAccount storageAccount = azure.storageAccounts().define(AZURE_STORAGE_ACCOUNT_NAME)
             .withRegion(Region.US_EAST)
-            .withExistingResourceGroup("rg-mcpazure-storage")
+            .withExistingResourceGroup(AZURE_RESOURCE_GROUP)
             .withAccessFromAllNetworks()
             .withSku(StorageAccountSkuType.STANDARD_RAGRS)
             .withGeneralPurposeAccountKindV2()
             .create();
 
-        System.out.println("Storage account " + storageAccount.name() + " has been created");
+        System.out.println("Storage account " + storageAccount.name() + " has been created in resource group " + storageAccount.resourceGroupName());
     }
 }

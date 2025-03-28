@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.agoncal.sample.mcp</groupId>
-  <artifactId>mcp-server-azure-storage-blob</artifactId>
+  <artifactId>mcp-server-commons</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>MCP :: Server :: Azure Storage Blob</name>
+  <name>MCP :: Server :: Commons</name>
 
   <properties>
     <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -45,12 +45,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- Project -->
-    <dependency>
-      <groupId>org.agoncal.sample.mcp</groupId>
-      <artifactId>mcp-server-commons</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
     <!-- Quarkus -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -59,12 +53,8 @@
     <!-- Azure -->
     <dependency>
       <groupId>com.azure.resourcemanager</groupId>
-      <artifactId>azure-resourcemanager</artifactId>
+      <artifactId>azure-resourcemanager-resources</artifactId>
       <version>${azure-management.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.azure</groupId>
-      <artifactId>azure-storage-blob</artifactId>
     </dependency>
     <dependency>
       <groupId>com.azure</groupId>

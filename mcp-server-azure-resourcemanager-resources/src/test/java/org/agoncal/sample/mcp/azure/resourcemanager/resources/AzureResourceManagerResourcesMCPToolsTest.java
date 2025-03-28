@@ -6,6 +6,7 @@ import com.azure.core.management.profile.AzureProfile;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.resources.models.ResourceGroup;
+import static org.agoncal.sample.mcp.azure.common.Constants.AZURE_RESOURCE_GROUP;
 
 public class AzureResourceManagerResourcesMCPToolsTest {
 
@@ -16,7 +17,7 @@ public class AzureResourceManagerResourcesMCPToolsTest {
                 new AzureProfile(AzureEnvironment.AZURE))
             .withDefaultSubscription();
 
-        ResourceGroup resourceGroup = azure.resourceGroups().define("rg-mcpazure-storage")
+        ResourceGroup resourceGroup = azure.resourceGroups().define(AZURE_RESOURCE_GROUP)
             .withRegion(Region.US_EAST)
             .create();
 

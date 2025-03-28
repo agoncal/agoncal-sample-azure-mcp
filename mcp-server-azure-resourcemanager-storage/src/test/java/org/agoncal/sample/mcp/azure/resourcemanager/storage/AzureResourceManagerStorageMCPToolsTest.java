@@ -1,11 +1,10 @@
 package org.agoncal.sample.mcp.azure.resourcemanager.storage;
 
-import com.azure.core.credential.TokenCredential;
+import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
-import com.azure.core.models.AzureCloud;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.resourcemanager.storage.StorageManager;
+import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.storage.models.StorageAccount;
 import com.azure.resourcemanager.storage.models.StorageAccountSkuType;
 import org.jboss.logging.Logger;
@@ -16,16 +15,12 @@ public class AzureResourceManagerStorageMCPToolsTest {
 
     public static void main(String[] args) {
 
-        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
+        AzureResourceManager azure = AzureResourceManager.authenticate(
+                new DefaultAzureCredentialBuilder().build(),
+                new AzureProfile(AzureEnvironment.AZURE))
+            .withDefaultSubscription();
 
-        TokenCredential credential = new DefaultAzureCredentialBuilder()
-            .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
-            .build();
-
-        StorageManager storageManager = StorageManager
-            .authenticate(credential, profile);
-
-        StorageAccount storageAccount = storageManager.storageAccounts().define("st-mcpazure-storage")
+        StorageAccount storageAccount = azure.storageAccounts().define("stmcpazureantoniomanug")
             .withRegion(Region.US_EAST)
             .withExistingResourceGroup("rg-mcpazure-storage")
             .withAccessFromAllNetworks()

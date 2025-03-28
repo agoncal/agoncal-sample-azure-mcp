@@ -53,6 +53,11 @@
     <!-- Azure -->
     <dependency>
       <groupId>com.azure.resourcemanager</groupId>
+      <artifactId>azure-resourcemanager</artifactId>
+      <version>${azure-management.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure.resourcemanager</groupId>
       <artifactId>azure-resourcemanager-storage</artifactId>
       <version>${azure-management.version}</version>
     </dependency>

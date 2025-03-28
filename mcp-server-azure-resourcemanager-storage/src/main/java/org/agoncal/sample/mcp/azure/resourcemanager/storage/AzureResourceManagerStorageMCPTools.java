@@ -1,12 +1,12 @@
 package org.agoncal.sample.mcp.azure.resourcemanager.storage;
 
-import com.azure.core.credential.TokenCredential;
+import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
-import com.azure.core.models.AzureCloud;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.resourcemanager.storage.StorageManager;
+import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.storage.models.StorageAccount;
+import com.azure.resourcemanager.storage.models.StorageAccountSkuType;
 import io.quarkiverse.mcp.server.McpLog;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
@@ -23,11 +23,14 @@ public class AzureResourceManagerStorageMCPTools {
                                              McpLog mcpLog) {
         log.info("Creating a storage account: " + storageAccountName);
 
-        StorageManager storageManager = getStorageManager();
+        AzureResourceManager azure = getAzureResourceManager();
 
-        StorageAccount storageAccount = storageManager.storageAccounts().define(storageAccountName)
+        StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)
             .withRegion(Region.US_EAST)
             .withExistingResourceGroup(resourceGroupName)
+            .withAccessFromAllNetworks()
+            .withSku(StorageAccountSkuType.STANDARD_RAGRS)
+            .withGeneralPurposeAccountKindV2()
             .create();
 
         mcpLog.info("Storage Account " + storageAccount.name() + " has been created");
@@ -39,24 +42,19 @@ public class AzureResourceManagerStorageMCPTools {
                                              McpLog mcpLog) {
         log.info("Creating a storage account: " + storageAccountName);
 
+        AzureResourceManager azure = getAzureResourceManager();
 
-        StorageManager storageManager = getStorageManager();
-        storageManager.storageAccounts().deleteById(storageAccountName);
+        azure.storageAccounts().deleteById(storageAccountName);
 
         mcpLog.info("Storage Account " + storageAccountName + " has been deleted");
         return ToolResponse.success();
     }
 
-    private static StorageManager getStorageManager() {
-        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
-
-        TokenCredential credential = new DefaultAzureCredentialBuilder()
-            .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
-            .build();
-
-        StorageManager storageManager = StorageManager
-            .authenticate(credential, profile);
-
-        return storageManager;
+    private static AzureResourceManager getAzureResourceManager() {
+        AzureResourceManager azure = AzureResourceManager.authenticate(
+                new DefaultAzureCredentialBuilder().build(),
+                new AzureProfile(AzureEnvironment.AZURE))
+            .withDefaultSubscription();
+        return azure;
     }
 }

@@ -1,11 +1,10 @@
 package org.agoncal.sample.mcp.azure.resourcemanager.resources;
 
-import com.azure.core.credential.TokenCredential;
+import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
-import com.azure.core.models.AzureCloud;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.resourcemanager.resources.ResourceManager;
+import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.resources.models.ResourceGroup;
 import io.quarkiverse.mcp.server.McpLog;
 import io.quarkiverse.mcp.server.Tool;
@@ -21,16 +20,9 @@ public class AzureResourceManagerResourcesMCPTools {
     public ToolResponse createResourceGroup(@ToolArg(name = "resource_group_name", description = "The name of the resource group to be created. A resource group in Azure is a container that holds related resources (storage account, database, message hubs...). The name of the resource group cannot have spaces and should start with the prefix 'rg-'.") String resourceGroupName, McpLog mcpLog) {
         log.info("Creating a resource group: " + resourceGroupName);
 
-        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
-        TokenCredential credential = new DefaultAzureCredentialBuilder()
-            .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
-            .build();
+        AzureResourceManager azure = getAzureResourceManager();
 
-        ResourceManager resourceManager = ResourceManager
-            .authenticate(credential, profile)
-            .withDefaultSubscription();
-
-        ResourceGroup resourceGroup = resourceManager.resourceGroups().define(resourceGroupName)
+        ResourceGroup resourceGroup = azure.resourceGroups().define(resourceGroupName)
             .withRegion(Region.US_EAST)
             .create();
 
@@ -42,18 +34,19 @@ public class AzureResourceManagerResourcesMCPTools {
     public ToolResponse deleteResourceGroup(@ToolArg(name = "resource_group_name", description = "The name of the resource group to be deleted. .") String resourceGroupName, McpLog mcpLog) {
         log.info("Deleting a resource group: " + resourceGroupName);
 
-        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
-        TokenCredential credential = new DefaultAzureCredentialBuilder()
-            .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
-            .build();
+        AzureResourceManager azure = getAzureResourceManager();
 
-        ResourceManager manager = ResourceManager
-            .authenticate(credential, profile)
-            .withDefaultSubscription();
-
-        manager.resourceGroups().deleteByName(resourceGroupName);
+        azure.resourceGroups().deleteByName(resourceGroupName);
 
         mcpLog.info("Resource Group " + resourceGroupName + " has been deleted");
         return ToolResponse.success();
+    }
+
+    private static AzureResourceManager getAzureResourceManager() {
+        AzureResourceManager azure = AzureResourceManager.authenticate(
+                new DefaultAzureCredentialBuilder().build(),
+                new AzureProfile(AzureEnvironment.AZURE))
+            .withDefaultSubscription();
+        return azure;
     }
 }

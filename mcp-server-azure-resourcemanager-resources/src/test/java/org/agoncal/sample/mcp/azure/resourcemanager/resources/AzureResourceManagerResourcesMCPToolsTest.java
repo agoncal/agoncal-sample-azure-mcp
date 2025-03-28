@@ -1,28 +1,22 @@
 package org.agoncal.sample.mcp.azure.resourcemanager.resources;
 
-import com.azure.core.credential.TokenCredential;
+import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
-import com.azure.core.models.AzureCloud;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.resourcemanager.resources.ResourceManager;
+import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.resources.models.ResourceGroup;
 
 public class AzureResourceManagerResourcesMCPToolsTest {
 
     public static void main(String[] args) {
 
-        AzureProfile profile = new AzureProfile(AzureCloud.AZURE_PUBLIC_CLOUD);
-
-        TokenCredential credential = new DefaultAzureCredentialBuilder()
-            .authorityHost(profile.getEnvironment().getActiveDirectoryEndpoint())
-            .build();
-
-        ResourceManager manager = ResourceManager
-            .authenticate(credential, profile)
+        AzureResourceManager azure = AzureResourceManager.authenticate(
+                new DefaultAzureCredentialBuilder().build(),
+                new AzureProfile(AzureEnvironment.AZURE))
             .withDefaultSubscription();
 
-        ResourceGroup resourceGroup = manager.resourceGroups().define("rg-mcpazure-storage")
+        ResourceGroup resourceGroup = azure.resourceGroups().define("rg-mcpazure-storage")
             .withRegion(Region.US_EAST)
             .create();
 

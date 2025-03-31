@@ -46,7 +46,7 @@ public class AzureStorageBlobMCPTools {
             return ToolResponse.error("Not creating Blob Container " + storageAccountName + " because it already exists");
         } else {
             blobServiceClient.createBlobContainer(blobContainerName);
-            mcpLog.info("Blob Container " + blobContainer.getBlobContainerName() + " has been created");
+            mcpLog.info("Blob Container " + blobContainer.getBlobContainerName() + " has been created in storage account " + blobContainer.getAccountName());
             return ToolResponse.success();
         }
     }
@@ -73,7 +73,7 @@ public class AzureStorageBlobMCPTools {
         // Upload the blob
         file.upload(contentStream);
 
-        mcpLog.info("File " + file.getBlobName() + " created in the blobContainer " + blobContainer.getBlobContainerName() + " with content size " + content.length());
+        mcpLog.info("File " + file.getBlobName() + " created in the blobContainer " + blobContainer.getBlobContainerName() + " in storage account " + blobContainer.getAccountName()+ " with content size " + content.length());
         return ToolResponse.success();
     }
 

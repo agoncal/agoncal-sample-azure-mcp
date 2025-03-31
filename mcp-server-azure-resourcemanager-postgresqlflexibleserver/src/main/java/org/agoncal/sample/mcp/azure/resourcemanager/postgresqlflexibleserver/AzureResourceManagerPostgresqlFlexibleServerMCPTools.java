@@ -34,7 +34,7 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
 
     @Tool(name = "creates_a_postgresql_flexible_server", description = "Creates a new Postgresql Flexible Server in an existing Azure Resource Group. If the Postgresql Flexible Server already exists, the operation succeeds silently.")
     public ToolResponse createPostgresqlFlexibleServer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
-                                                       @ToolArg(name = "postgresql_flexible_server_name", description = "The name of the Postgresql Flexible Server to be created. A Postgresql Flexible Server in Azure is a fully managed database service that provides more control and flexibility over database configuration parameters. The name of the database cannot have spaces, and should start with the prefix 'psql-'.") String postgresqlFlexibleServerName,
+                                                       @ToolArg(name = "postgresql_flexible_server_name", description = "The name of the Postgresql Flexible Server to be created. A Postgresql Flexible Server in Azure is a fully managed database service that provides more control and flexibility over database configuration parameters. The name of the database cannot have spaces, and should start with the prefix 'psql-'. Add the prefix 'psql-' if it's not there.") String postgresqlFlexibleServerName,
                                                        McpLog mcpLog) {
         log.info("Creating a postgresql flexible server: " + postgresqlFlexibleServerName);
 
@@ -60,7 +60,7 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
             .withHighAvailability(new HighAvailability().withMode(HighAvailabilityMode.DISABLED))
             .create();
 
-        mcpLog.info("Postgresql flexible server " + server.name() + " has been created");
+        mcpLog.info("Postgresql flexible server " + server.name() + " has been created in resource group " + server.resourceGroupName());
         return ToolResponse.success();
     }
 

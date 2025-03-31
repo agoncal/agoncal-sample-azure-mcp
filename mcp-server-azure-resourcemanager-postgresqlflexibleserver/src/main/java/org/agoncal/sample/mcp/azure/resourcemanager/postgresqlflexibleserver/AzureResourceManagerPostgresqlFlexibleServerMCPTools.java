@@ -23,6 +23,8 @@ import com.azure.resourcemanager.postgresqlflexibleserver.models.SkuTier;
 import com.azure.resourcemanager.postgresqlflexibleserver.models.Storage;
 import com.azure.resourcemanager.postgresqlflexibleserver.models.UserAssignedIdentity;
 import io.quarkiverse.mcp.server.McpLog;
+import io.quarkiverse.mcp.server.Resource;
+import io.quarkiverse.mcp.server.TextResourceContents;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.quarkiverse.mcp.server.ToolResponse;
@@ -31,6 +33,16 @@ import org.jboss.logging.Logger;
 public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerPostgresqlFlexibleServerMCPTools.class);
+
+    @Resource(name = "doc_quickstart_postgresql_flexible_server", description = "In this quickstart, you learn how to create, update, and delete an Azure Database for PostgreSQL flexible server instance using the Azure SDK for Java. The code examples are written in Java and use the Azure SDK libraries to interact with the Azure Database for PostgreSQL flexible server service", uri = "https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-java-sdk", mimeType = "text/html")
+    public TextResourceContents docQuickstartPostgresqlFlexibleServer() {
+        return TextResourceContents.create("https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-java-sdk",
+            """
+                In this quickstart, you learn how to create, update, and delete an Azure Database for PostgreSQL flexible server instance using the Azure SDK for Java. The code examples are written in Java and use the Azure SDK libraries to interact with the Azure Database for PostgreSQL flexible server service.
+
+                The Azure SDK for Java provides a set of libraries that allow you to interact with Azure services using Java. The SDK provides a consistent programming model and simplifies working with Azure services, including Azure Database for PostgreSQL flexible server.
+                """);
+    }
 
     @Tool(name = "creates_a_postgresql_flexible_server", description = "Creates a new Postgresql Flexible Server in an existing Azure Resource Group. If the Postgresql Flexible Server already exists, the operation succeeds silently.")
     public ToolResponse createPostgresqlFlexibleServer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,

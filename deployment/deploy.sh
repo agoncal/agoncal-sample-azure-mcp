@@ -25,37 +25,10 @@ az group create \
   --location "$LOCATION" \
   --tags system="$TAG"
 
-echo "Deploying Postgres database..."
-echo "----------------------"
-source ./deploy-infra-postgres.sh
-
-echo "Deploying AI model..."
-echo "----------------------"
-source ./deploy-infra-ai.sh
-
-echo "Deploying Monitoring..."
-echo "----------------------"
-source ./deploy-infra-monitoring.sh
-
-echo "Deploying Registry..."
-echo "----------------------"
-source ./deploy-infra-registry.sh
-
 echo "Deploying Storage..."
 echo "----------------------"
-source ./deploy-infra-storage.sh
+source ./deploy-mcp-azure-storage.sh
 
-echo "Deploying AppService..."
-echo "----------------------"
-source ./deploy-infra-appservice.sh
-
-echo "Deploying ACA..."
-echo "----------------------"
-source ./deploy-infra-aca.sh
-
-echo "Deploying Azure Function..."
-echo "----------------------"
-source ./deploy-infra-functionapp.sh
 
 
 echo "Deleting Resource Group..."

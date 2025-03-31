@@ -19,8 +19,8 @@ import java.io.IOException;
 
 public class ReadingFile {
 
-    private static final String AZURE_RESOURCE_GROUP = "rg-antoniomanugmcp";
-    private static final String AZURE_STORAGE_ACCOUNT_NAME = "stantoniomanugmcp";
+    private static final String AZURE_RESOURCE_GROUP = "rg-mcpazure";
+    private static final String AZURE_STORAGE_ACCOUNT_NAME = "stmcpazure";
     private static final String AZURE_STORAGE_CONTAINER_NAME = "poems";
     private static final String FILE_NAME = "city_of_paris.txt";
 

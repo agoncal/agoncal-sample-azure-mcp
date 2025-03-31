@@ -42,6 +42,8 @@ STORAGE_ACCOUNT_ID=$(az storage account show \
 
 echo "STORAGE_ACCOUNT_ID=$STORAGE_ACCOUNT_ID"
 
+echo "Creating the Container..."
+echo "----------------------"
 az storage container create \
     --account-name "$STORAGE_ACCOUNT" \
     --name "sample-container2" \

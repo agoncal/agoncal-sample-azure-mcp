@@ -18,7 +18,7 @@ public class AzureResourceManagerResourcesMCPToolsTest {
             .withDefaultSubscription();
 
         ResourceGroup resourceGroup = azure.resourceGroups().define(AZURE_RESOURCE_GROUP)
-            .withRegion(Region.US_EAST)
+            .withRegion(Region.SWEDEN_CENTRAL)
             .create();
 
         System.out.println("Resource Group " + resourceGroup.name() + " has been created");

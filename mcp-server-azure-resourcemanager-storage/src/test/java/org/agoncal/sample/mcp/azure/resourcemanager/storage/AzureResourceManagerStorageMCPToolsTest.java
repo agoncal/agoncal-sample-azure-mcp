@@ -20,7 +20,7 @@ public class AzureResourceManagerStorageMCPToolsTest {
             .withDefaultSubscription();
 
         StorageAccount storageAccount = azure.storageAccounts().define(AZURE_STORAGE_ACCOUNT_NAME)
-            .withRegion(Region.US_EAST)
+            .withRegion(Region.SWEDEN_CENTRAL)
             .withExistingResourceGroup(AZURE_RESOURCE_GROUP)
             .withAccessFromAllNetworks()
             .withSku(StorageAccountSkuType.STANDARD_RAGRS)

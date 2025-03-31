@@ -38,7 +38,7 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPToolsTest {
 
         Server server = manager.servers()
             .define(AZURE_POSTGRESQL_SERVER_NAME)
-            .withRegion(Region.US_EAST)
+            .withRegion(Region.SWEDEN_CENTRAL)
             .withExistingResourceGroup(AZURE_RESOURCE_GROUP)
             .withSku(new Sku().withName("Standard_D4ds_v5").withTier(SkuTier.GENERAL_PURPOSE))
             .withAuthConfig(new AuthConfig().withActiveDirectoryAuth(ActiveDirectoryAuthEnum.DISABLED)

@@ -31,7 +31,7 @@ public class AzureResourceManagerStorageMCPTools {
         } else {
 
             StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)
-                .withRegion(Region.US_EAST)
+                .withRegion(Region.SWEDEN_CENTRAL)
                 .withExistingResourceGroup(resourceGroupName)
                 .withAccessFromAllNetworks()
                 .withSku(StorageAccountSkuType.STANDARD_RAGRS)

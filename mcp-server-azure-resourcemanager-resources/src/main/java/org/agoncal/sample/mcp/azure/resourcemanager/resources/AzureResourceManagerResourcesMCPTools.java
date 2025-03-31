@@ -27,7 +27,7 @@ public class AzureResourceManagerResourcesMCPTools {
             return ToolResponse.error("Not creating resource group " + resourceGroupName + " because it already exists");
         } else {
             ResourceGroup resourceGroup = azure.resourceGroups().define(resourceGroupName)
-                .withRegion(Region.US_EAST)
+                .withRegion(Region.SWEDEN_CENTRAL)
                 .create();
 
             mcpLog.info("Resource Group " + resourceGroup.name() + " has been created");

@@ -4,12 +4,12 @@
 
 {
   "servers": {
-    "azure-storage-blob": {
+    "azure-mgt-postgresqlflexibleserver": {
       "type": "stdio",
       "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
       "args": [
         "-jar",
-        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-storage-blob/target/mcp-server-azure-storage-blob-1.0.0-SNAPSHOT-runner.jar"
+        "/Users/agoncal/Documents/Code/AGoncal/agoncal-sample-azure-mcp/mcp-server-azure-resourcemanager-postgresqlflexibleserver/target/mcp-server-azure-resourcemanager-postgresqlflexibleserver-1.0.0-SNAPSHOT-runner.jar"
       ]
     }
   }

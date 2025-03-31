@@ -17,7 +17,7 @@ public class AzureResourceManagerStorageMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerStorageMCPTools.class);
 
-    @Tool(name = "creates_a_storage_account", description = "Creates a new Storage Account in an existing Azure Resource Group. If the Storage Account already exists, the operation succeeds silently.")
+    @Tool(name = "creates_a_storage_account", description = "Creates a new Storage Account in an existing Azure Resource Group. If the Storage Account already exists, the operation fails.")
     public ToolResponse createStorageAccount(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                              @ToolArg(name = "storage_account_name", description = "The name of the Storage Account to be created. A Storage Account in Azure provides a unique namespace to store and access Azure Storage data objects, such as blobs, file shares, queues, tables, and disks. It allows you to manage data storage. The name of the Storage Account cannot have spaces not special characters, and should start with the prefix 'st'.") String storageAccountName,
                                              McpLog mcpLog) {
@@ -25,8 +25,9 @@ public class AzureResourceManagerStorageMCPTools {
 
         AzureResourceManager azure = getAzureResourceManager();
 
-        if (!azure.storageAccounts().checkNameAvailability(resourceGroupName).isAvailable()) {
+        if (!azure.storageAccounts().checkNameAvailability(storageAccountName).isAvailable()) {
             mcpLog.error("Not creating storage account " + storageAccountName + " because it already exists");
+            return ToolResponse.error("Not creating storage account " + storageAccountName + " because it already exists");
         } else {
 
             StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)

@@ -42,13 +42,13 @@ public class AzureStorageBlobMCPTools {
         BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
 
         if (blobContainer.exists()) {
-            mcpLog.error("Blob Container " + blobContainer.getBlobContainerName() + " already exists. Not creating it.");
+            mcpLog.error("Not creating Blob Container " + storageAccountName + " because it already exists");
+            return ToolResponse.error("Not creating Blob Container " + storageAccountName + " because it already exists");
         } else {
             blobServiceClient.createBlobContainer(blobContainerName);
             mcpLog.info("Blob Container " + blobContainer.getBlobContainerName() + " has been created");
+            return ToolResponse.success();
         }
-
-        return ToolResponse.success();
     }
 
     @Tool(name = "creates_a_text_file", description = "Creates a new text file in a given Blob Container. If the Blob Container does not exist, it creates it before creating the file.")

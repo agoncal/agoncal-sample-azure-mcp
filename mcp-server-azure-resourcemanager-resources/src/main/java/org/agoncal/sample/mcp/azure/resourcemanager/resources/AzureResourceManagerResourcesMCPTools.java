@@ -16,7 +16,7 @@ public class AzureResourceManagerResourcesMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerResourcesMCPTools.class);
 
-    @Tool(name = "creates_a_resource_group", description = "Creates a new Resource Group in Azure. If the Resource Group already exists, the operation succeeds silently.")
+    @Tool(name = "creates_a_resource_group", description = "Creates a new Resource Group in Azure. If the Resource Group already exists, the operation fails.")
     public ToolResponse createResourceGroup(@ToolArg(name = "resource_group_name", description = "The name of the Resource Group to be created. A Resource Group in Azure is a container that holds related resources (storage account, database, message hubs...). The name of the Resource Group cannot have spaces and should start with the prefix 'rg-'.") String resourceGroupName, McpLog mcpLog) {
         log.info("Creating a resource group: " + resourceGroupName);
 
@@ -24,14 +24,15 @@ public class AzureResourceManagerResourcesMCPTools {
 
         if (azure.resourceGroups().contain(resourceGroupName)) {
             mcpLog.error("Not creating resource group " + resourceGroupName + " because it already exists");
+            return ToolResponse.error("Not creating resource group " + resourceGroupName + " because it already exists");
         } else {
             ResourceGroup resourceGroup = azure.resourceGroups().define(resourceGroupName)
                 .withRegion(Region.US_EAST)
                 .create();
 
             mcpLog.info("Resource Group " + resourceGroup.name() + " has been created");
+            return ToolResponse.success();
         }
-        return ToolResponse.success();
     }
 
     @Tool(name = "deletes_a_resource_group", description = "Deletes an existing Resource Group from Azure. If the Resource Group does not exists, the operation fails")

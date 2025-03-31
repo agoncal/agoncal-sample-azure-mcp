@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.agoncal.sample.mcp</groupId>
-  <artifactId>mcp-server-azure-resourcemanager-storage</artifactId>
+  <artifactId>mcp-server-azure-resourcemanager-postgresqlflexibleserver</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>MCP :: Server :: Azure Management Storage</name>
+  <name>MCP :: Server :: Azure Management Postgresql Flexible Server</name>
 
   <properties>
     <compiler-plugin.version>3.13.0</compiler-plugin.version>
@@ -20,6 +20,7 @@
     <surefire-plugin.version>3.5.2</surefire-plugin.version>
     <azure-sdk-bom.version>1.2.32</azure-sdk-bom.version>
     <azure-management.version>2.48.0</azure-management.version>
+    <azure-management.postgresqlflexibleserver.version>1.1.0</azure-management.postgresqlflexibleserver.version>
     <quarkus-mcp-server.version>1.0.0.Beta5</quarkus-mcp-server.version>
   </properties>
 
@@ -65,8 +66,8 @@
     </dependency>
     <dependency>
       <groupId>com.azure.resourcemanager</groupId>
-      <artifactId>azure-resourcemanager-storage</artifactId>
-      <version>${azure-management.version}</version>
+      <artifactId>azure-resourcemanager-postgresqlflexibleserver</artifactId>
+      <version>${azure-management.postgresqlflexibleserver.version}</version>
     </dependency>
     <dependency>
       <groupId>com.azure</groupId>

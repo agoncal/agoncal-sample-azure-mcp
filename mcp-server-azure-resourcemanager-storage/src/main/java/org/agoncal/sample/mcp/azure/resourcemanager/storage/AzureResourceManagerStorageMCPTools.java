@@ -17,30 +17,35 @@ public class AzureResourceManagerStorageMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerStorageMCPTools.class);
 
-    @Tool(name = "creates_a_storage_account", description = "Creates a new storage account in an existing resource group. If the storage account already exists, the operation fails")
-    public ToolResponse createStorageAccount(@ToolArg(name = "storage_account_name", description = "The name of the storage account to be created. A storage account in Azure provides a unique namespace to store and access Azure Storage data objects, such as blobs, file shares, queues, tables, and disks. It allows you to manage data storage . The name of the storage account cannot have spaces not special characters, and should start with the prefix 'st'.") String storageAccountName,
-                                             @ToolArg(name = "resource_group_name", description = "The name of the existing resource group where the storage account is located.") String resourceGroupName,
+    @Tool(name = "creates_a_storage_account", description = "Creates a new Storage Account in an existing Azure Resource Group. If the Storage Account already exists, the operation succeeds silently.")
+    public ToolResponse createStorageAccount(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                             @ToolArg(name = "storage_account_name", description = "The name of the Storage Account to be created. A Storage Account in Azure provides a unique namespace to store and access Azure Storage data objects, such as blobs, file shares, queues, tables, and disks. It allows you to manage data storage. The name of the Storage Account cannot have spaces not special characters, and should start with the prefix 'st'.") String storageAccountName,
                                              McpLog mcpLog) {
         log.info("Creating a storage account: " + storageAccountName);
 
         AzureResourceManager azure = getAzureResourceManager();
 
-        StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)
-            .withRegion(Region.US_EAST)
-            .withExistingResourceGroup(resourceGroupName)
-            .withAccessFromAllNetworks()
-            .withSku(StorageAccountSkuType.STANDARD_RAGRS)
-            .withGeneralPurposeAccountKindV2()
-            .create();
+        if (!azure.storageAccounts().checkNameAvailability(resourceGroupName).isAvailable()) {
+            mcpLog.error("Not creating storage account " + storageAccountName + " because it already exists");
+        } else {
 
-        mcpLog.info("Storage Account " + storageAccount.name() + " has been created");
+            StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)
+                .withRegion(Region.US_EAST)
+                .withExistingResourceGroup(resourceGroupName)
+                .withAccessFromAllNetworks()
+                .withSku(StorageAccountSkuType.STANDARD_RAGRS)
+                .withGeneralPurposeAccountKindV2()
+                .create();
+
+            mcpLog.info("Storage Account " + storageAccount.name() + " has been created");
+        }
         return ToolResponse.success();
     }
 
-    @Tool(name = "deletes_a_storage_account", description = "Deletes an existing storage account. If the storage account does not exists, the operation fails")
-    public ToolResponse deleteStorageAccount(@ToolArg(name = "storage_account_name", description = "The name of the storage account to be deleted. The name of the storage account cannot have spaces nor special characters, and should start with the prefix 'st'.") String storageAccountName,
+    @Tool(name = "deletes_a_storage_account", description = "Deletes an existing Storage Account. If the Storage Account does not exists, the operation fails")
+    public ToolResponse deleteStorageAccount(@ToolArg(name = "storage_account_name", description = "The name of the Storage Account to be deleted.") String storageAccountName,
                                              McpLog mcpLog) {
-        log.info("Creating a storage account: " + storageAccountName);
+        log.info("Deleting a storage account: " + storageAccountName);
 
         AzureResourceManager azure = getAzureResourceManager();
 

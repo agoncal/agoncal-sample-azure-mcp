@@ -29,41 +29,43 @@ public class AzureStorageBlobMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureStorageBlobMCPTools.class);
 
-    @Tool(name = "creates_a_directory", description = "Creates a new directory in an existing storage account in an existing resource group. If the directory already exists, the operation fails")
-    public ToolResponse createDirectory(@ToolArg(name = "resource_group_name", description = "The name of the existing resource group.") String resourceGroupName,
-                                        @ToolArg(name = "storage_account_name", description = "The name of the existing storage account where the directory has to be created.") String storageAccountName,
-                                        @ToolArg(name = "directory_name", description = "The directory name to be created. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
-        log.info("Creating a directory: " + directoryName);
+    @Tool(name = "creates_a_blob_container", description = "Creates a new Blob Container in an existing Storage Account in an existing Azure Resource Group. If the Blob Container already exists, the operation succeeds silently.")
+    public ToolResponse createBlobContainer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                            @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
+                                            @ToolArg(name = "blob_container_name", description = "The name of the Blob Container to be created. The Blob Container name cannot have spaces.") String blobContainerName,
+                                            McpLog mcpLog) {
+        log.info("Creating a blob container: " + blobContainerName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient(resourceGroupName, storageAccountName);
 
         // Creates the container and return a container client object
-        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
+        BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
 
-        if (directory.exists()) {
-            mcpLog.error("Directory " + directory.getBlobContainerName() + " already exists. Not creating it.");
+        if (blobContainer.exists()) {
+            mcpLog.error("Blob Container " + blobContainer.getBlobContainerName() + " already exists. Not creating it.");
         } else {
-            blobServiceClient.createBlobContainer(directoryName);
-            mcpLog.info("Directory " + directory.getBlobContainerName() + " has been created");
+            blobServiceClient.createBlobContainer(blobContainerName);
+            mcpLog.info("Blob Container " + blobContainer.getBlobContainerName() + " has been created");
         }
 
         return ToolResponse.success();
     }
 
-    @Tool(name = "creates_a_text_file", description = "Creates a new text file in a given directory in an existing storage account in an existing resource group. If the directory does not exist, it creates it.")
-    public ToolResponse createFile(@ToolArg(name = "resource_group_name", description = "The name of the existing resource group.") String resourceGroupName,
-                                   @ToolArg(name = "storage_account_name", description = "The name of the existing storage account where the file has to be created.") String storageAccountName,
-                                   @ToolArg(name = "directory_name", description = "The directory name to be created. The directory name cannot have spaces nor special characters.") String directoryName,
-                                   @ToolArg(name = "file_name", description = "The name of the file to be created in the directory. The file name cannot have spaces nor special characters. The file extension must be '.txt'.") String fileName,
-                                   @ToolArg(description = "The content of the file in text format.") String content, McpLog mcpLog) {
-        log.info("Creating a file: " + fileName + " in directory: " + directoryName);
+    @Tool(name = "creates_a_text_file", description = "Creates a new text file in a given Blob Container. If the Blob Container does not exist, it creates it before creating the file.")
+    public ToolResponse createFile(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                   @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
+                                   @ToolArg(name = "blob_container_name", description = "The name of the Blob Container where the text file has to be created. The Blob Container name cannot have spaces.") String blobContainerName,
+                                   @ToolArg(name = "file_name", description = "The name of the file to be created in the Blob Container. The file name cannot have spaces nor special characters. The file extension must be '.txt'.") String fileName,
+                                   @ToolArg(description = "The content of the file in text format.") String content,
+                                   McpLog mcpLog) {
+        log.info("Creating a file: " + fileName + " in blob container: " + blobContainerName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient(resourceGroupName, storageAccountName);
 
-        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
+        BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
 
         // Get a reference to a blob
-        BlobClient file = directory.getBlobClient(fileName);
+        BlobClient file = blobContainer.getBlobClient(fileName);
 
         // Convert String content to InputStream
         InputStream contentStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
@@ -71,65 +73,67 @@ public class AzureStorageBlobMCPTools {
         // Upload the blob
         file.upload(contentStream);
 
-        mcpLog.info("File " + file.getBlobName() + " created in the directory " + directory.getBlobContainerName() + " with content size " + content.length());
+        mcpLog.info("File " + file.getBlobName() + " created in the blobContainer " + blobContainer.getBlobContainerName() + " with content size " + content.length());
         return ToolResponse.success();
     }
 
-    @Tool(name = "reads_a_text_file", description = "Reads a text file in a given directory in an existing storage account in an existing resource group.")
-    public ToolResponse readFile(@ToolArg(name = "resource_group_name", description = "The name of the existing resource group.") String resourceGroupName,
-                                 @ToolArg(name = "storage_account_name", description = "The name of the existing storage account from where the file has to be read.") String storageAccountName,
-                                 @ToolArg(name = "directory_name", description = "The directory name where the file is located. The directory name cannot have spaces nor special characters.") String directoryName,
-                                 @ToolArg(name = "file_name", description = "The name of the file to be read in the directory. The file name cannot have spaces nor special characters and its file extension must be '.txt'.") String fileName, McpLog mcpLog) {
-        log.info("Reading a file: " + fileName + " in directory: " + directoryName);
+    @Tool(name = "reads_a_text_file", description = "Reads a text file in a given blobContainer in an existing storage account in an existing resource group.")
+    public ToolResponse readFile(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                 @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
+                                 @ToolArg(name = "blob_container_name", description = "The name of the Blob Container where the text is located.") String blobContainerName,
+                                 @ToolArg(name = "file_name", description = "The name of the file to be read in the Blob Container. The file name cannot have spaces nor special characters and its file extension must be '.txt'.") String fileName, McpLog mcpLog) {
+        log.info("Reading a file: " + fileName + " in blobContainer: " + blobContainerName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient(resourceGroupName, storageAccountName);
 
-        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
+        BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
 
         // Get a reference to a blob
-        BlobClient file = directory.getBlobClient(fileName);
+        BlobClient file = blobContainer.getBlobClient(fileName);
 
         // Download the content
         BinaryData data = file.downloadContent();
 
-        mcpLog.info("File " + file.getBlobName() + " has been read from the directory " + directory.getBlobContainerName() + " with content size " + data.getLength());
+        mcpLog.info("File " + file.getBlobName() + " has been read from the blobContainer " + blobContainer.getBlobContainerName() + " with content size " + data.getLength());
         return ToolResponse.success(new TextContent(data.toString()));
     }
 
 
-    @Tool(name = "deletes_a_directory", description = "Deletes a directory from an existing storage account from an existing resource group. If the directory does not exist, the operation fails")
-    public ToolResponse deleteDirectory(@ToolArg(name = "resource_group_name", description = "The name of the existing resource group.") String resourceGroupName,
-                                        @ToolArg(name = "storage_account_name", description = "The name of the existing storage account from where the directory has to be deleted.") String storageAccountName,
-                                        @ToolArg(name = "directory_name", description = "The directory name to be deleted. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
-        log.info("Deleting a directory: " + directoryName);
+    @Tool(name = "deletes_a_blob_container", description = "Deletes a blob container from an existing storage account from an existing resource group. If the blobContainer does not exist, the operation fails")
+    public ToolResponse deleteBlobContainer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                            @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
+                                            @ToolArg(name = "blob_container_name", description = "The name of the blob Container name to be deleted..") String blobContainerName,
+                                            McpLog mcpLog) {
+        log.info("Deleting a blob container: " + blobContainerName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient(resourceGroupName, storageAccountName);
 
         // Creates the container and return a container client object
-        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
-        directory.delete();
+        BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
+        blobContainer.delete();
 
-        mcpLog.info("Directory " + directory.getBlobContainerName() + " has been deleted");
+        mcpLog.info("BlobContainer " + blobContainer.getBlobContainerName() + " has been deleted");
         return ToolResponse.success();
     }
 
-    @Tool(name = "lists_files_under_a_directory", description = "Lists all the files under a directory from an existing storage account from an existing resource group.")
-    public ToolResponse listDirectories(@ToolArg(name = "resource_group_name", description = "The name of the existing resource group.") String resourceGroupName,
-                                        @ToolArg(name = "storage_account_name", description = "The name of the existing storage account from where the files have to be listed.") String storageAccountName,
-                                        @ToolArg(name = "directory_name", description = "The root directory name from where it lists all the files. The directory name cannot have spaces nor special characters.") String directoryName, McpLog mcpLog) {
-        log.info("Listing files under a directory: " + directoryName);
+    @Tool(name = "lists_files_under_a_blob_container", description = "Lists all the files under a blob container from an existing storage account from an existing resource group.")
+    public ToolResponse listDirectories(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                        @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
+                                        @ToolArg(name = "blob_container_name", description = "The name of the Blob Container name from where all the files are listed.") String blobContainerName,
+                                        McpLog mcpLog) {
+        log.info("Listing files under a blob container: " + blobContainerName);
 
         BlobServiceClient blobServiceClient = getBlobServiceClient(resourceGroupName, storageAccountName);
 
         // Creates the container and return a container client object
-        BlobContainerClient directory = blobServiceClient.getBlobContainerClient(directoryName);
+        BlobContainerClient blobContainer = blobServiceClient.getBlobContainerClient(blobContainerName);
 
         List<TextContent> files = new ArrayList<>();
-        for (BlobItem file : directory.listBlobs()) {
+        for (BlobItem file : blobContainer.listBlobs()) {
             files.add(new TextContent(file.getName()));
         }
 
-        mcpLog.info("Directory " + directory.getBlobContainerName() + " has " + files.size() + " files");
+        mcpLog.info("BlobContainer " + blobContainer.getBlobContainerName() + " has " + files.size() + " files");
         return ToolResponse.success(files);
     }
 

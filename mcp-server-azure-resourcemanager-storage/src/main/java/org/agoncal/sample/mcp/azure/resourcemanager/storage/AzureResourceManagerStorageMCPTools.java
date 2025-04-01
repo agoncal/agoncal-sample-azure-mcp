@@ -38,6 +38,7 @@ public class AzureResourceManagerStorageMCPTools {
                 .withSku(StorageAccountSkuType.STANDARD_RAGRS)
                 .withGeneralPurposeAccountKindV2()
                 .withMinimumTlsVersion(MinimumTlsVersion.TLS1_2)
+                .enableDefaultToOAuthAuthentication()
                 .create();
 
             mcpLog.info("Storage Account " + storageAccount.name() + " has been created in resource group " + storageAccount.resourceGroupName());

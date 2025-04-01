@@ -46,7 +46,7 @@ echo "Creating the Container..."
 echo "----------------------"
 az storage container create \
     --account-name "$STORAGE_ACCOUNT" \
-    --name "sample-container2" \
+    --name "poems" \
     --account-key "$STORAGE_ACCOUNT_KEY" \
     --auth-mode "key"
 

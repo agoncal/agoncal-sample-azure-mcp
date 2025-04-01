@@ -5,6 +5,7 @@ import com.azure.core.management.Region;
 import com.azure.core.management.profile.AzureProfile;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.resourcemanager.AzureResourceManager;
+import com.azure.resourcemanager.storage.models.MinimumTlsVersion;
 import com.azure.resourcemanager.storage.models.StorageAccount;
 import com.azure.resourcemanager.storage.models.StorageAccountSkuType;
 import io.quarkiverse.mcp.server.McpLog;
@@ -36,6 +37,7 @@ public class AzureResourceManagerStorageMCPTools {
                 .withAccessFromAllNetworks()
                 .withSku(StorageAccountSkuType.STANDARD_RAGRS)
                 .withGeneralPurposeAccountKindV2()
+                .withMinimumTlsVersion(MinimumTlsVersion.TLS1_2)
                 .create();
 
             mcpLog.info("Storage Account " + storageAccount.name() + " has been created in resource group " + storageAccount.resourceGroupName());

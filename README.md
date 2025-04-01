@@ -15,6 +15,8 @@ In the screenshot below, you can see how to use GH Copilot Chat within VS Code t
 
 ![mcp.png](mcp.png)
 
+## How to create an MCP Server
+
 These MCP Servers are developed in Java using the [Quarkus MCP Server extension](https://docs.quarkiverse.io/quarkus-mcp-server/dev/).
 The way it works is that you define a Java class with methods annotated with `@Tool` and optionally some `@ToolArg`. 
 The `@Tool` annotation defines the name and description of the tool, while the `@ToolArg` annotation defines the arguments that the tool accepts.
@@ -58,5 +60,19 @@ Then, you need to build the project, produce the Fat-JAR file that will contain 
       ]
     }
   }
+}
+```
+
+## Authentication
+
+To manage a resource, each MCP server needs to authenticate to Azure. This is done on a per-request basis using the following:
+
+```java
+private static AzureResourceManager getAzureResourceManager() {
+  AzureResourceManager azure = AzureResourceManager.authenticate(
+      new DefaultAzureCredentialBuilder().build(),
+      new AzureProfile(AzureEnvironment.AZURE))
+    .withDefaultSubscription();
+  return azure;
 }
 ```

@@ -21,7 +21,7 @@
     <azure-sdk-bom.version>1.2.32</azure-sdk-bom.version>
     <azure-management.version>2.48.0</azure-management.version>
     <azure-management.postgresqlflexibleserver.version>1.1.0</azure-management.postgresqlflexibleserver.version>
-    <quarkus-mcp-server.version>1.0.0.CR1</quarkus-mcp-server.version>
+    <quarkus-mcp-server.version>1.0.0</quarkus-mcp-server.version>
   </properties>
 
   <dependencyManagement>

@@ -63,3 +63,4 @@ out/
 .certs/
 
 data/
+downloaded_*.txt

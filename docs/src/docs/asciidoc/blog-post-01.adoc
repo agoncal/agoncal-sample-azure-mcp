@@ -1,26 +1,62 @@
-= XXXX
+= Deploying Azure Resources using MCP and Quarkus
 :author: {author-name}
 :icons: font
 :source-highlighter: highlight.js
 
 == Introduction
-* xxx
 
-== Prerequisites
-* Azure account and Azure CLI installed
-* Java and Maven installed
-* Quarkus application
+* Link to the previous blog post
+* Link to the code of this blog post
+* Brief recap of MCP and its purpose
+* The problem: complexity of Azure infrastructure deployment (you can use Azure CLI, Powershell, Bicep, Terraform, or the Azure portal to deploy Azure resources)
+* How natural language interfaces can simplify Azure management
+* What we'll build: a Quarkus-based MCP server for Azure
 
-== yyy
-* xxx
+== Designing the MCP Azure Server
+
+* You can either have one single MCP server for all your Azure services or have one MCP server per Azure service (one for Storage Accounts, one for PostgreSQL, etc.)
+* Overview of MCP server capabilities for Azure
+* Quarkus MCP server extension for the rescue
+* Tool definitions for common Azure operations
+* Authentication and security considerations
+* Error handling and response formatting
+
+== Creating Resource Groups with MCP
+
+* Managing resource groups
+* Implementing tools
+* Building a Fat-JAR with Quarkus
+
+== Creating Storage Accounts with MCP
+
+* Managing storage accounts
+* Implementing tools
+* Building a Fat-JAR with Quarkus
+
+== Integrating with IDEs
+
+* User experience and natural language interaction patterns
+* Claude Desktop
+* VS Code integration
+* Configuration files
 
 == Conclusion
-* xxxx
 
-== Definitions:
-*	xxx
+* Benefits of natural language Azure management
+* MCP server for Azure
+* MCP is endless
 
-== Resources
+== Where to Go Next
+
+* Resources and documentation
+* Contributing to the project
+* Related MCP servers and integrations
+
+
+== Where to Go Next
+
+To learn more about MCP and LangChain4j, you can explore these resources:
+
 * https://learn.microsoft.com/azure/storage/blobs/storage-blob-java-get-started?tabs=azure-ad[Get started with Azure Blob Storage and Java]
 * https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-java?tabs=powershell%2Cmanaged-identity%2Croles-azure-portal%2Csign-in-azure-cli&pivots=blob-storage-quickstart-scratch[Quickstart: Azure Blob Storage client library for Java]
 * https://learn.microsoft.com/rest/api/storageservices/authorize-with-azure-active-directory[Authorize with Microsoft Entra ID]
@@ -34,3 +70,8 @@
 * https://github.com/microsoft/vscode/issues/242864[MCP Server in VS Code]
 * https://github.com/microsoft/vscode/issues/244525[Testing MCP Server in VS Code]
 * https://www.mcp.run[MCP Run]
+Announcing Spring AI MCP: A Java SDK for the Model Context Protocol
+https://spring.io/blog/2024/12/11/spring-ai-mcp-announcement
+
+Implementing a MCP server in Quarkus
+https://quarkus.io/blog/mcp-server/

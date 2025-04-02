@@ -5,73 +5,235 @@
 
 == Introduction
 
-* Link to the previous blog post
-* Link to the code of this blog post
-* Brief recap of MCP and its purpose
-* The problem: complexity of Azure infrastructure deployment (you can use Azure CLI, Powershell, Bicep, Terraform, or the Azure portal to deploy Azure resources)
-* How natural language interfaces can simplify Azure management
-* What we'll build: a Quarkus-based MCP server for Azure
+In my https://www.linkedin.com/pulse/integrating-mcp-model-context-protocol-langchain4j-access-goncalves-pedze[previous article], I introduced the https://modelcontextprotocol.io/introduction[Model Context Protocol] (MCP) and demonstrated how it could be integrated with https://docs.langchain4j.dev[LangChain4j] to access GitHub.
+MCP is an open standard protocol that enables seamless integration between LLM applications and external data sources and tools, allowing AI models to access real-time information and perform actions.
+
+In this article I will show you how to develop an MCP Server using the https://github.com/quarkiverse/quarkus-mcp-server[Quarkus MCP Server] extension.
+And because MCP is so powerful and lets you do so many things, I will show you how to use it to deploy and manage Azure resources using natural language commands.
+
+If you've worked with https://azure.microsoft.com[Azure] before, you know there are multiple ways to deploy resources:
+Azure CLI, PowerShell, Bicep, Terraform, or the Azure portal.
+Each has its learning curve and syntax peculiarities.
+Wouldn't it be simpler to just describe what you want in plain English (or in another language) and have it created for you?
+That's exactly what we can do with MCP.
+There are many ways and many programming languages to develop MCP servers, but in this article, I will show you how to use https://quarkus.io[Quarkus] and its https://github.com/quarkiverse/quarkus-mcp-server[MCP Server extension].
+Then, once the MCP Servers are developed and packaged, I'll show you how you can interact directly with them within your IDE (VS Code for now).
+Instead of remembering complex command syntax or navigating through the Azure portal, you'll be able to simply tell your IDE, "_Create a storage account called 'foo' in resource group 'bar'_" and have it done for you.
+
+The complete code for this article is https://github.com/agoncal/agoncal-sample-azure-mcp[available on GitHub].
 
 == Designing the MCP Azure Server
 
-* You can either have one single MCP server for all your Azure services or have one MCP server per Azure service (one for Storage Accounts, one for PostgreSQL, etc.)
-* Overview of MCP server capabilities for Azure
-* Quarkus MCP server extension for the rescue
-* Tool definitions for common Azure operations
-* Authentication and security considerations
-* Error handling and response formatting
+Azure provides a wide range of services, including virtual machines, databases, storage, networking, etc.
+All of them can be managed using the https://github.com/Azure/azure-sdk-for-java[Azure SDK for Java].
+For each service you want to manage with MCP, you need to implement a set of _tools_ that can create, delete, and list resources.
+Therefore, when building an MCP server for Azure, you have two architectural options:
+
+* Create a single MCP server that handles all Azure services
+* Create multiple specialized MCP servers, one per Azure service (Storage, PostgreSQL, etc.)
+
+I took the second approach to keep each MCP Server focused and maintainable.
+But also because MCP servers are designed to communicate with the client and be "_understood_" by an LLM.
+A single huge server would send too much information to the LLM, making it difficult to understand and process.
+
+In this article I create separate MCP servers for Azure Resource Groups and Storage Accounts.
+But you can easily extend this to other Azure services like PostgreSQL, CosmosDB, etc.
 
 == Creating Resource Groups with MCP
 
-* Managing resource groups
-* Implementing tools
-* Building a Fat-JAR with Quarkus
+Let's first start by developing a Resource Group MCP Server to create and delete Azure Resource Groups.
+https://learn.microsoft.com/azure/azure-resource-manager/management/manage-resource-groups-portal[Resource Groups] are containers that hold related resources in Azure.
+
+The Quarkus MCP server extension makes implementing MCP servers straightforward.
+This extension enables you to define tools as simple Java methods with annotations (`@Tool`), automatically handling all the MCP protocol details.
+Let's implement a tool that creates a new Resource Group using the Azure SDK:
+
+.Creating a Resource Group
+[source,java,indent=0]
+----
+@Tool(name = "creates_a_resource_group", description = "Creates a new Resource Group in Azure. A Resource Group in Azure is a container that holds related resources (storage account, database, message hubs...). If the Resource Group already exists, the operation fails.")
+public ToolResponse createResourceGroup(@ToolArg(name = "resource_group_name", description = "The name of the Resource Group to be created. The name of the Resource Group cannot have spaces and should start with the prefix 'rg-'. Add the prefix 'rg-' if it's not there.") String resourceGroupName,
+                                        McpLog mcpLog) {
+
+    AzureResourceManager azure = getAzureResourceManager();
+
+    if (azure.resourceGroups().contain(resourceGroupName)) {
+        mcpLog.error("Not creating resource group " + resourceGroupName + " because it already exists");
+        return ToolResponse.error("Not creating resource group " + resourceGroupName + " because it already exists");
+    } else {
+        ResourceGroup resourceGroup = azure.resourceGroups().define(resourceGroupName)
+            .withRegion(Region.SWEDEN_CENTRAL)
+            .create();
+
+        mcpLog.info("Resource Group " + resourceGroup.name() + " has been created");
+        return ToolResponse.success();
+    }
+}
+----
+
+Let's break down this implementation:
+
+* The `@Tool` annotation exposes this method as an MCP tool, providing a name and description that will help LLMs understand when and how to use this tool.
+* The `@ToolArg` annotation defines the expected parameter, including a helpful description for the LLM but also some instructions such as "_Add the prefix 'rg-' if it's not there_" so the LLM can correctly format the input.
+* The `McpLog` parameter allows to send log messages back to the MCP client (in our case, VS Code).
+* The method `createResourceGroup` checks if the Resource Group already exists and returns an error if it does.
+* If the Resource Group doesn't exist, it creates one and returns a success response.
+
+For authentication with Azure, we use the https://learn.microsoft.com/java/api/overview/azure/identity-readme?view=azure-java-stable[Azure Identity library].
+This method uses the `DefaultAzureCredential`, which tries various authentication methods in sequence, making it flexible for different environments:
+
+.Authenticating to Azure
+[source,java,indent=0]
+----
+private static AzureResourceManager getAzureResourceManager() {
+    AzureResourceManager azure = AzureResourceManager.authenticate(
+            new DefaultAzureCredentialBuilder().build(),
+            new AzureProfile(AzureEnvironment.AZURE))
+        .withDefaultSubscription();
+    return azure;
+}
+----
 
 == Creating Storage Accounts with MCP
 
-* Managing storage accounts
-* Implementing tools
-* Building a Fat-JAR with Quarkus
+Now, let's implement a tool to create https://learn.microsoft.com/azure/storage/common/storage-account-overview[Storage Accounts].
+Storage accounts contain all of your Azure Storage data objects such as blobs, files, queues, and tables.
 
-== Integrating with IDEs
+The `createStorageAccount` takes two arguments: the existing Resource Group name and the new Storage Account name.
+It checks whether the Storage Account name is available.
+If not available, it creates a Storage Account with specific configurations:
 
-* User experience and natural language interaction patterns
-* Claude Desktop
-* VS Code integration
-* Configuration files
+.Creating a Storage Account
+[source,java,indent=0]
+----
+@Tool(name = "creates_a_storage_account", description = "Creates a new Storage Account in an existing Azure Resource Group. A Storage Account in Azure provides a unique namespace to store and access Azure Storage data objects, such as blobs, file shares, queues, tables, and disks. If the Storage Account already exists, the operation fails.")
+public ToolResponse createStorageAccount(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
+                                         @ToolArg(name = "storage_account_name", description = "The name of the Storage Account to be created. It allows you to manage data storage. The name of the Storage Account cannot have spaces not special characters, and should start with the prefix 'st'. Add the prefix 'st' if it's not there.") String storageAccountName,
+                                         McpLog mcpLog) {
+
+    AzureResourceManager azure = getAzureResourceManager();
+
+    if (!azure.storageAccounts().checkNameAvailability(storageAccountName).isAvailable()) {
+        mcpLog.error("Not creating storage account " + storageAccountName + " because it already exists");
+        return ToolResponse.error("Not creating storage account " + storageAccountName + " because it already exists");
+    } else {
+
+        StorageAccount storageAccount = azure.storageAccounts().define(storageAccountName)
+            .withRegion(Region.SWEDEN_CENTRAL)
+            .withExistingResourceGroup(resourceGroupName)
+            .withAccessFromAllNetworks()
+            .withSku(StorageAccountSkuType.STANDARD_RAGRS)
+            .withGeneralPurposeAccountKindV2()
+            .withMinimumTlsVersion(MinimumTlsVersion.TLS1_2)
+            .enableDefaultToOAuthAuthentication()
+            .create();
+
+        mcpLog.info("Storage Account " + storageAccount.name() + " has been created in resource group " + storageAccount.resourceGroupName());
+    }
+    return ToolResponse.success();
+}
+----
+
+== Packaging the MCP Server
+
+When developing MCP servers, they must be packaged in a way that allows them to be started with a single command (with optional parameters).
+This packaging requirement is essential because MCP clients, such as IDEs, need to launch the server as a subprocess and connect to it through either STDIO or SSE.
+It could be packaged as a Fat-JAR, a native executable, or a Docker image.
+For these MCP servers, I've chosen to package them as Fat-JARs using Quarkus.
+
+To build a Fat-JAR with Quarkus, you can use the following Maven command (or have the `quarkus.package.jar.type=uber-jar` in your `application.properties` file):
+
+[source,term,indent=0]
+----
+./mvnw package -Dquarkus.package.jar.type=uber-jar
+----
+
+This creates a self-contained JAR file that includes all dependencies needed to run our MCP server.
+It then can be started with a simple Java command:
+
+[source,term,indent=0]
+----
+java -jar target/mcp-server-azure-resourcemanager-resources-runner.jar
+----
+
+== Integrating with VS Code
+
+Now that we have our MCP servers built, let's integrate them with VS Code.
+VS Code has recently https://github.com/microsoft/vscode/issues/242864[added MCP support], allowing you to connect to MCP servers directly from the editor.
+To configure VS Code to use our MCP servers, we need to create a configuration file:
+Make sure to replace `<full path>` with the actual path to your JAR files.
+
+.Configuring VS Code
+[source,json,indent=0]
+----
+{
+  "servers": {
+    "azure-mgt-resources": {
+      "type": "stdio",
+      "command": "~/.sdkman/candidates/java/23.0.1-tem/bin/java",
+      "args": [
+        "-jar",
+        "<full path>/target/mcp-server-azure-resourcemanager-resources-runner.jar"
+      ]
+    },
+    "azure-mgt-storage": {
+      "type": "stdio",
+      "command": "/Users/agoncal/.sdkman/candidates/java/23.0.1-tem/bin/java",
+      "args": [
+        "-jar",
+        "<full path>/target/mcp-server-azure-resourcemanager-storage-runner.jar"
+      ]
+    }
+  }
+}
+----
+
+With this configuration in place, VS Code can start our MCP servers and communicate with them using the MCP protocol.
+The user experience is straightforward:
+Open GitHub Copilot Chat, and type natural language commands directly in VS Code.
+For example: "_Create a new resource group called 'foo'_" or "_Add a storage account called 'bar' in the created 'resource group'_".
+
+.Chatting with the MCP Servers
+image::vscode_chat.png[]
+
+The LLM interprets these commands, identifies which MCP server to use, and passes the appropriate parameters to the relevant tool.
+The entire user experience is seamless, allowing you to manage Azure resources without needing to remember complex command syntax, all that within your IDE.
+
+.VS Code and Copilot Chat
+image::vscode_full.png[]
 
 == Conclusion
 
-* Benefits of natural language Azure management
-* MCP server for Azure
-* MCP is endless
+In this article I've shown you how to build MCP servers that allow you to manage Azure resources using natural language.
+By leveraging the Quarkus MCP extension and the Azure SDK, you can easily create MCP servers to do complex task in a very easy way.
+
+This is just the beginning of what's possible with MCP:
+you could extend this approach to cover other Azure services or build similar interfaces for other purposes.
+The power of MCP lies in its ability to bridge the gap between natural language and complex technical operations.
+It enables non-technical users to perform technical tasks and allows experienced developers to work more efficiently by expressing their intentions directly in natural language.
+
+As MCP is still relatively new, special thanks to Tugdual Grall for helping with the VS Code integration and the Quarkus team (maxandersen, Martin Kouba, Georgios Andrianakis, Clement Escoffier) for their support in the Quarkus MCP extension.
 
 == Where to Go Next
 
-* Resources and documentation
-* Contributing to the project
-* Related MCP servers and integrations
+To learn more about MCP, Azure or the Quarkus MCP Server extension, you can explore these resources:
 
-
-== Where to Go Next
-
-To learn more about MCP and LangChain4j, you can explore these resources:
-
+* https://www.linkedin.com/pulse/integrating-mcp-model-context-protocol-langchain4j-access-goncalves-pedze[Integrating MCP (Model Context Protocol) with LangChain4j to access GitHub]
 * https://learn.microsoft.com/azure/storage/blobs/storage-blob-java-get-started?tabs=azure-ad[Get started with Azure Blob Storage and Java]
+* https://github.com/Azure/azure-sdk-for-java[Azure SDK for Java]
+* https://github.com/quarkiverse/quarkus-mcp-server[Quarkus MCP Server extension]
 * https://learn.microsoft.com/azure/storage/blobs/storage-quickstart-blobs-java?tabs=powershell%2Cmanaged-identity%2Croles-azure-portal%2Csign-in-azure-cli&pivots=blob-storage-quickstart-scratch[Quickstart: Azure Blob Storage client library for Java]
 * https://learn.microsoft.com/rest/api/storageservices/authorize-with-azure-active-directory[Authorize with Microsoft Entra ID]
 * https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory[Authorize access to blobs using Microsoft Entra ID]
 * https://learn.microsoft.com/azure/storage/blobs/authorize-data-operations-cli[Choose how to authorize access to blob data with Azure CLI]
 * https://learn.microsoft.com/rest/api/storageservices/authorize-with-shared-key[Authorize with Shared Key]
-* https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents[Introducing Model Context Protocol (MCP) in Copilot Studio: Simplified Integration with AI Apps and Agents]
+* https://www.microsoft.com/microsoft-copilot/blog/copilot-studio/introducing-model-context-protocol-mcp-in-copilot-studio-simplified-integration-with-ai-apps-and-agents[Introducing Model Context Protocol (MCP) in Copilot Studio: Simplified Integration with AI Apps and Agents]
 * https://www.youtube.com/watch?v=GNfQM88Vthc[Introducing Model Context Protocol (MCP) in Copilot Studio]
 * https://github.com/modelcontextprotocol/inspector[MCP Inspector]
 * https://mcp-get.com[MCP Server Registry]
 * https://github.com/microsoft/vscode/issues/242864[MCP Server in VS Code]
 * https://github.com/microsoft/vscode/issues/244525[Testing MCP Server in VS Code]
 * https://www.mcp.run[MCP Run]
-Announcing Spring AI MCP: A Java SDK for the Model Context Protocol
-https://spring.io/blog/2024/12/11/spring-ai-mcp-announcement
+* https://spring.io/blog/2024/12/11/spring-ai-mcp-announcement[Announcing Spring AI MCP: A Java SDK for the Model Context Protocol]
+* https://quarkus.io/blog/mcp-server[Implementing a MCP server in Quarkus]
 
-Implementing a MCP server in Quarkus
-https://quarkus.io/blog/mcp-server/

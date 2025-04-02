@@ -1,5 +1,7 @@
 # Azure MCP Servers
 
+Read the full article [Deploying Azure Resources using MCP and Quarkus](https://www.linkedin.com/pulse/deploying-azure-resources-using-mcp-quarkus-antonio-goncalves-jjaqe).
+
 In this repository, you will find some MCP Servers for Azure:
 
 * `mcp-server-azure`: Lists the Azure regions and abbreviations suggestions.

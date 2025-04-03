@@ -17,7 +17,10 @@ public class AzureMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureMCPTools.class);
 
-    @Tool(name = "lists_all_the_regions", description = "Lists all the available regions in Azure. A region in Azure is a geographical area containing one or more data centers that are in close proximity and networked together with a low-latency network.")
+    @Tool(name = "lists_all_the_regions", description = """
+        Lists all the available regions in Azure.
+        A region in Azure is a geographical area containing one or more data centers that are in close proximity and networked together with a low-latency network.
+        """)
     public ToolResponse listRegions(McpLog mcpLog) {
         log.info("Listing all the regions");
 
@@ -32,7 +35,10 @@ public class AzureMCPTools {
         return ToolResponse.success(content);
     }
 
-    @Tool(name = "lists_all_the_resource_abbreviation", description = "Returns the abbreviations for many of the resources in Azure. The following list has abbreviations mapped to resource and abbreviation")
+    @Tool(name = "lists_all_the_resource_abbreviation", description = """
+        Returns the abbreviations for many of the resources in Azure.
+        The following list has abbreviations mapped to resource and abbreviation
+        """)
     public ToolResponse listAbbreviations(McpLog mcpLog) {
         log.info("Listing all the known abbreviations");
 

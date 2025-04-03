@@ -29,7 +29,10 @@ public class AzureStorageBlobMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureStorageBlobMCPTools.class);
 
-    @Tool(name = "creates_a_blob_container", description = "Creates a new Blob Container in an existing Storage Account in an existing Azure Resource Group. If the Blob Container already exists, the operation succeeds silently.")
+    @Tool(name = "creates_a_blob_container", description = """
+        Creates a new Blob Container in an existing Storage Account in an existing Azure Resource Group.
+        If the Blob Container already exists, the operation succeeds silently.
+        """)
     public ToolResponse createBlobContainer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                             @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
                                             @ToolArg(name = "blob_container_name", description = "The name of the Blob Container to be created. The Blob Container name cannot have spaces.") String blobContainerName,
@@ -51,7 +54,10 @@ public class AzureStorageBlobMCPTools {
         }
     }
 
-    @Tool(name = "creates_a_text_file", description = "Creates a new text file in a given Blob Container. If the Blob Container does not exist, it creates it before creating the file.")
+    @Tool(name = "creates_a_text_file", description = """
+        Creates a new text file in a given Blob Container.
+        If the Blob Container does not exist, it creates it before creating the file.
+        """)
     public ToolResponse createFile(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                    @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
                                    @ToolArg(name = "blob_container_name", description = "The name of the Blob Container where the text file has to be created. The Blob Container name cannot have spaces.") String blobContainerName,
@@ -73,11 +79,13 @@ public class AzureStorageBlobMCPTools {
         // Upload the blob
         file.upload(contentStream);
 
-        mcpLog.info("File " + file.getBlobName() + " created in the blobContainer " + blobContainer.getBlobContainerName() + " in storage account " + blobContainer.getAccountName()+ " with content size " + content.length());
+        mcpLog.info("File " + file.getBlobName() + " created in the blobContainer " + blobContainer.getBlobContainerName() + " in storage account " + blobContainer.getAccountName() + " with content size " + content.length());
         return ToolResponse.success();
     }
 
-    @Tool(name = "reads_a_text_file", description = "Reads a text file in a given blobContainer in an existing storage account in an existing resource group.")
+    @Tool(name = "reads_a_text_file", description = """
+        Reads a text file in a given blobContainer in an existing storage account in an existing resource group.
+        """)
     public ToolResponse readFile(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                  @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
                                  @ToolArg(name = "blob_container_name", description = "The name of the Blob Container where the text is located.") String blobContainerName,
@@ -99,7 +107,10 @@ public class AzureStorageBlobMCPTools {
     }
 
 
-    @Tool(name = "deletes_a_blob_container", description = "Deletes a blob container from an existing storage account from an existing resource group. If the blobContainer does not exist, the operation fails")
+    @Tool(name = "deletes_a_blob_container", description = """
+        Deletes a blob container from an existing storage account from an existing resource group.
+        If the blobContainer does not exist, the operation fails.
+        """)
     public ToolResponse deleteBlobContainer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                             @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
                                             @ToolArg(name = "blob_container_name", description = "The name of the blob Container name to be deleted..") String blobContainerName,
@@ -116,7 +127,9 @@ public class AzureStorageBlobMCPTools {
         return ToolResponse.success();
     }
 
-    @Tool(name = "lists_files_under_a_blob_container", description = "Lists all the files under a blob container from an existing storage account from an existing resource group.")
+    @Tool(name = "lists_files_under_a_blob_container", description = """
+        Lists all the files under a blob container from an existing storage account from an existing resource group.
+        """)
     public ToolResponse listDirectories(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                         @ToolArg(name = "storage_account_name", description = "The name of the existing Storage Account.") String storageAccountName,
                                         @ToolArg(name = "blob_container_name", description = "The name of the Blob Container name from where all the files are listed.") String blobContainerName,

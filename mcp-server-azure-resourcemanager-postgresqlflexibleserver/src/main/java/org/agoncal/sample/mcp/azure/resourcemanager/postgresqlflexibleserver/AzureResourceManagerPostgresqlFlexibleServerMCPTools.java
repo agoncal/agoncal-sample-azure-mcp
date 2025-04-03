@@ -34,7 +34,10 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
 
     private static final Logger log = Logger.getLogger(AzureResourceManagerPostgresqlFlexibleServerMCPTools.class);
 
-    @Resource(name = "doc_quickstart_postgresql_flexible_server", description = "In this quickstart, you learn how to create, update, and delete an Azure Database for PostgreSQL flexible server instance using the Azure SDK for Java. The code examples are written in Java and use the Azure SDK libraries to interact with the Azure Database for PostgreSQL flexible server service", uri = "https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-java-sdk", mimeType = "text/html")
+    @Resource(name = "doc_quickstart_postgresql_flexible_server", uri = "https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-java-sdk", mimeType = "text/html", description = """
+        In this quickstart, you learn how to create, update, and delete an Azure Database for PostgreSQL flexible server instance using the Azure SDK for Java.
+        The code examples are written in Java and use the Azure SDK libraries to interact with the Azure Database for PostgreSQL flexible server service.
+        """)
     public TextResourceContents docQuickstartPostgresqlFlexibleServer() {
         return TextResourceContents.create("https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-java-sdk",
             """
@@ -44,7 +47,10 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
                 """);
     }
 
-    @Tool(name = "creates_a_postgresql_flexible_server", description = "Creates a new Postgresql Flexible Server in an existing Azure Resource Group. If the Postgresql Flexible Server already exists, the operation succeeds silently.")
+    @Tool(name = "creates_a_postgresql_flexible_server", description = """
+        Creates a new Postgresql Flexible Server in an existing Azure Resource Group.
+        If the Postgresql Flexible Server already exists, the operation succeeds silently.
+        """)
     public ToolResponse createPostgresqlFlexibleServer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                                        @ToolArg(name = "postgresql_flexible_server_name", description = "The name of the Postgresql Flexible Server to be created. A Postgresql Flexible Server in Azure is a fully managed database service that provides more control and flexibility over database configuration parameters. The name of the database cannot have spaces, and should start with the prefix 'psql-'. Add the prefix 'psql-' if it's not there.") String postgresqlFlexibleServerName,
                                                        McpLog mcpLog) {
@@ -76,7 +82,10 @@ public class AzureResourceManagerPostgresqlFlexibleServerMCPTools {
         return ToolResponse.success();
     }
 
-    @Tool(name = "deletes_a_postgresql_flexible_server", description = "Deletes an existing Postgresql Flexible Server from Azure. If the Database does not exists, the operation fails")
+    @Tool(name = "deletes_a_postgresql_flexible_server", description = """
+        Deletes an existing Postgresql Flexible Server from Azure.
+        If the Database does not exists, the operation fails.
+        """)
     public ToolResponse deletePostgresqlFlexibleServer(@ToolArg(name = "resource_group_name", description = "The name of the existing Azure Resource Group.") String resourceGroupName,
                                                        @ToolArg(name = "postgresql_flexible_server_name", description = "The name of the Postgresql Flexible Server to be deleted.") String postgresqlFlexibleServerName,
                                                        McpLog mcpLog) {

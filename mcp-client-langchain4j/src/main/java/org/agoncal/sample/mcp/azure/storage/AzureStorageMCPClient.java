@@ -1,4 +1,4 @@
-package org.agoncal.sample.mcp.azurestorage;
+package org.agoncal.sample.mcp.azure.storage;
 
 
 import dev.langchain4j.mcp.McpToolProvider;
@@ -38,7 +38,7 @@ public class AzureStorageMCPClient {
             .mcpClients(List.of(mcpClient))
             .build();
 
-        Bot bot = AiServices.builder(Bot.class)
+        AzureStorageBot bot = AiServices.builder(AzureStorageBot.class)
             .chatModel(model)
             .toolProvider(toolProvider)
             .build();

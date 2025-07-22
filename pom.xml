@@ -18,6 +18,77 @@
     <module>mcp-server-commons</module>
   </modules>
 
+  <properties>
+    <!-- LangChain4j -->
+    <langchain4j.version>1.1.0</langchain4j.version>
+    <logback.version>1.5.16</logback.version>
+    <!-- Quarkus -->
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+    <quarkus.platform.version>3.24.4</quarkus.platform.version>
+    <skipITs>true</skipITs>
+    <quarkus-mcp-server.version>1.4.0</quarkus-mcp-server.version>
+    <!-- Azure -->
+    <azure-sdk-bom.version>1.2.36</azure-sdk-bom.version>
+    <azure-management.version>2.52.0</azure-management.version>
+    <azure-management.postgresqlflexibleserver.version>1.1.0</azure-management.postgresqlflexibleserver.version>
+    <!-- Plugins -->
+    <compiler-plugin.version>3.13.0</compiler-plugin.version>
+    <exec-plugin.version>3.5.0</exec-plugin.version>
+    <surefire-plugin.version>3.5.2</surefire-plugin.version>
+    <!-- Project -->
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- LangChain4j -->
+      <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-bom</artifactId>
+        <version>${langchain4j.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Quarkus -->
+      <dependency>
+        <groupId>${quarkus.platform.group-id}</groupId>
+        <artifactId>${quarkus.platform.artifact-id}</artifactId>
+        <version>${quarkus.platform.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Azure -->
+      <dependency>
+        <groupId>com.azure</groupId>
+        <artifactId>azure-sdk-bom</artifactId>
+        <version>${azure-sdk-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- Others -->
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>${exec-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <profiles>
     <profile>
       <id>doc</id>

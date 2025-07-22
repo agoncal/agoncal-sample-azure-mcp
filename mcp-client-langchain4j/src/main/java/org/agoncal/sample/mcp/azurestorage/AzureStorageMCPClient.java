@@ -6,7 +6,7 @@ import dev.langchain4j.mcp.client.DefaultMcpClient;
 import dev.langchain4j.mcp.client.McpClient;
 import dev.langchain4j.mcp.client.transport.McpTransport;
 import dev.langchain4j.mcp.client.transport.stdio.StdioMcpTransport;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
 
@@ -18,7 +18,7 @@ public class AzureStorageMCPClient {
 
     public static void main(String[] args) throws Exception {
 
-        ChatLanguageModel model = OpenAiChatModel.builder()
+        ChatModel model = OpenAiChatModel.builder()
             .apiKey(OPENAI_API_KEY)
             .modelName("gpt-4o-mini")
             .logRequests(true)
@@ -39,7 +39,7 @@ public class AzureStorageMCPClient {
             .build();
 
         Bot bot = AiServices.builder(Bot.class)
-            .chatLanguageModel(model)
+            .chatModel(model)
             .toolProvider(toolProvider)
             .build();
 
